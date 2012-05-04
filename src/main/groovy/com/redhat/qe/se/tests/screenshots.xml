@@ -1,0 +1,58 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="MyDevTestSuite">
+<!-- This suite file isn't used at all by the Hudson automation.  It was created
+to use during development, to test the automation without affecting the 
+configuration that's used by Hudson.
+
+To run it in eclipse, open the run dialog, create a new TestNG test,
+choose "Suite" and point to this file.  Also add the program argument
+-listener com.redhat.qe.auto.selenium.TestNGListener
+that will turn on all the detailed logging. Finally change myDevGroup below
+to the testng group name you are using to categorize your @Test -->
+
+	
+	<test name="Screenshots">
+		<packages>
+			<package name="com.redhat.qe.ce10.tests" />
+			<package name="com.redhat.qe.ce10.base" />
+		</packages> 
+		<groups>
+			<run>
+			    <include name="setup" />
+				<include name="testplan-CloudEngine:Screenshots" />
+				<exclude name="knownBug"/>
+			</run>
+		</groups>
+	</test>
+		
+</suite>
+
+<!--
+
+<listeners>
+  		<listener class-name="com.redhat.qe.auto.testng.TestNGListener" />
+  		<listener class-name="com.redhat.qe.auto.bugzilla.BugzillaTestNGListener" />
+  		<listener class-name="com.redhat.qe.auto.tcms.TCMSTestNGListener" />
+	</listeners>
+
+		<classes>
+			<class name="com.redhat.qe.jon22.tests.StartPageTests" />
+			<class name="com.redhat.qe.jon.base.TestScript" />
+		</classes>
+		
+		
+		<test name="self_service" dependsOn="instances">
+		<packages>
+			<package name="com.redhat.qe.ce10.tests" />
+			<package name="com.redhat.qe.ce10.base" />
+		</packages> 
+		<groups>
+			<run>
+				<include name="setup" />
+				<include name="testplan-CloudEngine:SelfService" />
+				<exclude name="knownBug"/>
+			</run>
+		</groups>
+	</test>
+		-->

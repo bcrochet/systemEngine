@@ -1,0 +1,48 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="MyDevTestSuite">
+<!-- This suite file isn't used at all by the Hudson automation.  It was created
+to use during development, to test the automation without affecting the 
+configuration that's used by Hudson.
+
+To run it in eclipse, open the run dialog, create a new TestNG test,
+choose "Suite" and point to this file.  Also add the program argument
+-listener com.redhat.qe.auto.selenium.TestNGListener
+that will turn on all the detailed logging. Finally change myDevGroup below
+to the testng group name you are using to categorize your @Test -->
+
+	<test name="ConfigServer">
+		<packages>
+			<package name="com.redhat.qe.ce10.tests" />
+			<package name="com.redhat.qe.ce10.base" />
+		</packages> 
+		<groups>
+			<run>
+				<include name="setup" />
+				<include name="testplan-CloudEngine:ImageImport" />
+				<exclude name="knownBug"/>
+				<exclude name="dcsetup"/>
+			</run>
+		</groups>
+	</test>
+
+	<listeners>
+        
+  		<listener class-name="com.redhat.qe.auto.testng.TestNGListener" />
+  		
+  		
+	</listeners>
+</suite>
+
+<!--
+<listener class-name="com.redhat.qe.auto.tcms.TCMSTestNGListener" />
+
+  
+		
+		<classes>
+			<class name="com.redhat.qe.jon22.tests.StartPageTests" />
+			<class name="com.redhat.qe.jon.base.TestScript" />
+		</classes>
+		-->
+		
+	
