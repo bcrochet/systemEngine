@@ -11,6 +11,9 @@ allprojects {
 	compileTestGroovy.groovyOptions.fork = false
 }
 
+configurations {
+	testng
+}
 
 eclipse {
 	classpath {
@@ -34,25 +37,28 @@ repositories {
 }
 
 dependencies {
-	testCompile 'org.testng:testng:6.4',
+	def testngVersion = '6.5.1'
+	def seleniumVersion = '2.21.0'
+	
+	testCompile "org.testng:testng:${testngVersion}",
 		'org.uncommons:reportng:1.1.3',
 		'xmlunit:xmlunit:1.3'
 	testRuntime 'org.slf4j:slf4j-jdk14:1.6.4',
                     'com.google.inject:guice:2.0'
-	compile 'org.testng:testng:6.4',
+	compile "org.testng:testng:${testngVersion}",
 		'com.google.code.typica:typica:1.7.2',
-		'org.seleniumhq.selenium.client-drivers:selenium-java-client-driver:1.0.2',
-		'commons-httpclient:commons-httpclient:3.1',
-		'org.apache.httpcomponents:httpclient:4.1.2',
+		"org.seleniumhq.selenium:selenium-java:${seleniumVersion}",
+		'org.apache.httpcomponents:httpclient:[4.1.2,5.0)',
 		'xmlunit:xmlunit:1.3',
 		'webui-framework:webui-framework:1.0.2-SNAPSHOT',
-		'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2',
-      		'com.trilead:trilead-ssh2:build213-svnkit-1.3-patch',
+		'org.codehaus.groovy.modules.http-builder:http-builder:[0.5.2,1.0)',
+      	'com.trilead:trilead-ssh2:build213-svnkit-1.3-patch',
 		'org.apache.xmlrpc:xmlrpc-common:3.1.3',
 		'com.google.collections:google-collections:1.0',
 		'org.apache.ivy:ivy:2.2.0',
-		'oauth.signpost:signpost-core:1.2'
-	groovy 'org.codehaus.groovy:groovy:1.8.4'
+		'oauth.signpost:signpost-core:[1.2,2.0)'
+	groovy 'org.codehaus.groovy:groovy:1.8.6'
+	testng "org.testng:testng:${testngVersion}"	
 }
 
 task printClasspath << {
@@ -109,6 +115,27 @@ tasks.addRule("Pattern: suite<SuiteName>: Runs a test suite via xml in classpath
 			dummyTask.dependsOn suiteTask
 		}
 	}
+}
+
+task runTestng(dependsOn: 'testClasses') << {
+	// Defaults to $WORKSPACE, or if that's null, cwd
+	def workspace = System.getProperty("workspace.dir", System.getenv("WORKSPACE") ?: System.properties["user.dir"])
+	def testngProjectDir = System.getProperty("testng.project.dir", "automatjon/jon")
+	def automationDir = "${workspace}/${testngProjectDir}"
+	System.properties["automation.dir"] = automationDir.toString()
+	def outputDir = System.getProperty("testng.outputdir", "${automationDir}/test-output")
+	def xmlSuite = System.properties["testng.suites"]
+	ant.taskdef( resource: 'testngtasks', classpath: configurations.testng.asPath )
+	ant.testng( classpath: sourceSets.test.runtimeClasspath.asPath, outputdir: outputDir) {
+		xmlfileset(dir: 'src', includes: "**/${xmlSuite}")
+	}
+
+}
+
+task startConsole(dependsOn: 'classes', type: JavaExec) {
+    main = 'groovy.ui.Console'
+    classpath = configurations.groovy + sourceSets.main.runtimeClasspath
+    systemProperties = System.properties
 }
 
 jar {

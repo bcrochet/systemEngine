@@ -8,12 +8,537 @@ import com.redhat.qe.auto.selenium.TabElement
 import com.redhat.qe.se.base.SeleniumTestScript
 
 public class UIElements extends UILocatorStrategies{
-    
-    public static final String arch_i386 = "i386";
-    public static final String arch_x86_64 = "x86_64";
-    public static final String fedora13 = "Fedora 13";
-    public static final String fedora14 = "Fedora 14";
-    
+    //NAVIGATION
+    def tabs = [ "Dashboard", "Content Management", "Systems", "Organizations", "Administration"]
+//    TabElement dashboard = new TabElement(notSelectedNavLink, selectedNavLink, "Adminstration")
+    def administrationSubtabs = [ "Users", "Roles" ]
+
+    def navigation = new NodeBuilder().topLevel() {
+            dashboardTab()
+            contentManagementTab() {
+                contentProvidersTab() {
+                    customContentProvidersTab() {
+                        newProviderPage()
+                        namedProviderPage() {
+                            providerProductsReposPage() {
+                                namedProductPage()
+                                namedRepoPage()
+                            }
+                            providerDetailsPage()
+                            providerSubscriptionsPage()
+                        }
+                    }
+                    redhatProviderTab()
+                }
+                syncManagementPage() {
+                    syncStatusPage()
+                    syncPlansPage() {
+                        namedSyncPlanPage()
+                        newSyncPlanPage()
+                    }
+                    syncSchedulePage()
+                }
+                promotionsPage() {
+                    namedEnvironmentPromotionsPage() {
+                        namedChangesetPromotionsPage()
+                    }
+                }
+                systemTemplatesPage() {
+                    namedSystemTemplatePage()
+                    newSystemTemplatePage()
+                }
+            }
+            systemsTab() {
+                systemsAllPage() {
+                    systemsByEnvironmentPage() {
+                        namedSystemsPage() {
+                            systemSubscriptionsPage()
+                        }
+                    }
+                }
+                activationKeysPage() {
+                    namedActivationKeyPage()
+                    newActivationKeyPage()
+                }
+                systemsEnvironmentPage() {
+                    namedSystemEnvironmentPage()
+                }
+            }
+            organizationsTab() {
+                newOrganizationPage()
+                namedOrganizationPage() {
+                    newEnvironmentPage()
+                    namedEnvironmentPage()
+                }
+            }
+            administrationTab() {
+                usersTab() {
+                    namedUserPage() {
+                        userEnvironmentsPage()
+                        userRolesPermissionsPage()
+                    }
+                }
+                rolesTab() {
+                    namedRolePage() {
+                        namedRoleUsersPage()
+                        namedRolePermissionsPage()
+                    }
+                }
+            }
+        }
+//    tab_elements = {'dashboard_tab' : (By.XPATH, "//a[.='Dashboard']"),
+//                             'content_management_tab' : (By.XPATH, "//a[.='Content Management']"),
+//                             'providers' : (By.XPATH, "//a[.='Content Providers']"),
+//                             'systems_tab' : (By.XPATH, "//a[.='Systems']"),
+//                             'systems_all' : (By.XPATH, "//a[.='All']"),
+//                             'systems_by_environment' : (By.XPATH, "//a[.='By Environments']"),
+//                             'activation_keys' : (By.XPATH, "//a[.='Activation Keys']"),
+//                             'organizations_tab' : (By.XPATH, "//a[.='Organizations']"),
+//                             'organizations_all' : (By.XPATH, "//a[.='List']"),
+//                             'organizations_subscriptions' : (By.XPATH, "//a[.='Subscriptions']"),
+//                             'administration_tab' : (By.XPATH, "//a[.='Administration']"),
+//                             'users_administration': (By.XPATH, "//a[.='Users']"),
+//                             'roles_administration' : (By.XPATH, "//a[.='Roles']"),}
+//      (defmacro define-strategies
+//        "Expands into a function for each locator strategy in map m (which
+//        maps symbol to LocatorStrategy). Each function will be named the
+//        same as the symbol, take arguments and return a new element
+//        constructed with the locator strategy and args. See also the
+//        LocatorTemplate class."
+//        [m]
+//        `(do ~@(for [loc-strat (keys m)]
+//                 `(def ~loc-strat
+//                    (template ~@(m loc-strat))))))
+//    def strategies = { m ->
+//        m.keys.each { loc-strat ->
+//            def ${loc-strat} = template(m, loc-strat)
+//        }
+//    }
+//          
+//      (define-strategies
+//        {add-repository ["Add Repository" "//div[@id='products']//div[contains(.,'$1')]/..//div[normalize-space(.)='Add Repository' and contains(@class, 'button')]"]
+//         button-div ["Button"
+//                     "//div[contains(@class,'button') and normalize-space(.)='$1']"]
+//         changeset ["Changeset"
+//                    "//div[starts-with(@id,'changeset_') and normalize-space(.)='$1']"]
+//         changeset-status ["Changeset status"  "//span[.='$1']/..//span[@class='changeset_status']"]
+//         editable ["Editable" "//div[contains(@class, 'editable') and descendant::text()[substring(normalize-space(),2)='$1']]"]
+//         
+//         environment-link ["Environment"
+//                           "//div[contains(@class,'jbreadcrumb')]//a[normalize-space(.)='$1']"]
+//      
+//         link ["" "link=$1"]
+//         notification-close-index ["Notification close button"
+//                                   "xpath=(//div[contains(@class,'jnotify-notification-error')]//a[@class='jnotify-close'])[$1]"]
+//         org-switcher ["Org switch list" "//div[@id='orgbox']//a[.='$1']"]
+//         permission-org ["Permission Org" "//li[@class='slide_link' and starts-with(normalize-space(.),'$1')]"]
+//      
+//         plus-icon ["Plus icon" "//li[.='$1']//span[contains(@class,'ui-icon-plus')]"]
+//         product-edit ["Product edit"
+//                       "//div[@id='products']//div[contains(@data-url, 'edit') and contains(.,'$1')]"]
+//         product-expand ["Expand product"
+//                         "//div[@id='products']//div[contains(@data-url,'products') and contains(.,'$1')]/..//img[@alt='Expand']"]
+//         product-schedule ["Schedule for product" "//div[normalize-space(.)='$1']/following-sibling::div[1]"]
+//         schedule ["Product to schedule" "//div[normalize-space(.)='$1']"]
+//         promotion-add-content-item ["Add Content Item"
+//                                     "//a[@data-display_name='$1' and contains(.,'Add')]"]
+//         promotion-content-category ["Content Category" "//div[@id='$1']"]
+//         promotion-content-item-n ["Content item by index"
+//                                  "//div[@id='list']//li[$1]//div[contains(@class,'simple_link')]/descendant::text()[(position()=0 or parent::span) and string-length(normalize-space(.))>0]"]
+//         promotion-remove-content-item ["Remove Content Item"
+//                                        "//a[@data-display_name='$1' and contains(.,'Remove')]"]
+//         provider-sync-checkbox ["Provider sync checkbox"
+//                                 "//table[@id='products_table']//label[normalize-space(.)='$1']/..//input"]
+//         provider-sync-progress ["Provider progress"
+//                                 "//tr[td/label[normalize-space(.)='$1']]/td[5]"]
+//         repo-enable-checkbox ["Repo enable checkbox" "//table[@id='products_table']//label[normalize-space(.)='$1']/..//input"]
+//         role-action ["Role action" "//li[.//span[@class='sort_attr' and .='$2']]//a[.='$1']"]
+//         slide-link ["Slide Link" "//li[contains(@class,'slide_link') and normalize-space(.)='$1']"]
+//         subscription-checkbox ["Subscription checkbox" "//div[@id='panel-frame']//td[contains(normalize-space(.),'$1')]//input[@type='checkbox']"]
+//         sync-plan ["Sync Plan" "//div[@id='plans']//div[normalize-space(.)='$1']"]
+//         tab ["Tab" "link=$1"]
+//         template-product ["Template product" "//span[contains(@class, 'custom-product-sprite')]/following-sibling::span/text()[contains(.,'$1')]"]
+//         template-action ["Template content action" "//a[@data-name='$2' and .='$1']"]
+//         template-eligible-category ["Template category" "//div[@id='content_tree']//div[normalize-space()='$1']"]
+//         textbox ["" "xpath=//*[self::input[(@type='text' or @type='password' or @type='file') and @name='$1'] or self::textarea[@name='$1']]"]
+//         user ["User" "//div[@id='list']//div[contains(@class,'column_1') and normalize-space(.)='$1']"]
+//         username-field ["Username field" "//div[@id='users']//div[normalize-space(.)='$1']"]
+//         left-pane-field-list ["Left pane item#" "xpath=(//div[contains(@class,'ellipsis')])[$1]"]})
+//      
+//      (defn- tabs
+//        "Takes a list of keywords, and creates mapping eg: {:my-tab 'link=My Tab'}"
+//        [keys]
+//        (same-name capitalize tab keys))
+//      
+//      ;;
+//      ;;UI locators - mapping of names to selenium locator strings.
+//      ;;
+//      
+//      (def common {:notification "//div[contains(@class,'jnotify-notification')]"
+//                   :error-message "//div[contains(@class,'jnotify-notification-error')]"
+//                   :success-message "//div[contains(@class,'jnotify-notification-message')]"
+//                   :spinner "//img[contains(@src,'spinner.gif')]"
+//                   :save-inplace-edit "//button[.='Save']"
+//                   :confirmation-dialog "//div[contains(@class, 'confirmation')]"
+//                   :confirmation-yes "//div[contains(@class, 'confirmation')]//span[.='Yes']"
+//                   :confirmation-no "//div[contains(@class, 'confirmation')]//span[.='No']"
+//                   :search-bar "search"
+//                   :search-submit "//button[@form='search_form']"
+//                   ;;main banner
+//                   :account "//li[@class='hello']/a"
+//                   :log-out "//a[normalize-space(.)='Logout']"
+//                   :org-switcher "switcherButton"
+//                   :active-org "//*[@id='switcherButton']/div[1]"
+//                   })
+//      
+//      (def all-tabs (tabs [:organizations
+//                           :administration
+//                           :systems
+//                           :content-management
+//                           :dashboard
+//                           :all
+//                           :by-environments
+//                           :create
+//      
+//                           ;;subtabs
+//                           :content-providers
+//                           :custom-content-providers
+//                           :red-hat-content-provider
+//                           :sync-management
+//                           :sync-status
+//                           :sync-plans
+//                           :sync-schedule
+//                           :promotions
+//                           :system-templates
+//                           :users
+//                           :roles
+//                           :activation-keys
+//                           :details
+//                           
+//                           :registered
+//                           :groups
+//                           :general
+//                           :subscriptions
+//                           :facts
+//                           :packages]))
+//      
+//      (def organizations {:new-organization "//a[@id='new']"
+//                          :create-organization "organization_save"
+//                          :org-name-text (textbox "name")
+//                          :org-description-text (textbox "description")
+//                          :org-environments (link "Environments")
+//                          :edit-organization (link "Edit")
+//                          :remove-organization (link "Remove Organization")
+//                          :org-description-text-edit "organization[description]"})
+//      
+//      (def environments {:env-name-text (textbox "name")
+//                         :env-description-text (textbox "description")
+//                         :prior-environment "//select[@id='prior']"
+//                         :create-environment "//input[@value='Create']"
+//                         :new-environment "//div[normalize-space(.)='Add New Environment']"
+//                         :remove-environment (link "Remove Environment")
+//                         :env-name-text-edit "kt_environment[name]"
+//                         :env-description-text-edit "kt_environment[description]"
+//                         :env-prior-select-edit "kt_environment[prior]" })
+//      
+//      (def providers {:new-provider "new"
+//                      :provider-name-text  "provider[name]"
+//                      :provider-description-text "provider[description]"
+//                      :provider-repository-url-text "provider[repository_url]"
+//                      :provider-cert-text (textbox "provider[certificate_attributes][contents]")
+//                      :provider-create-save "provider_save"
+//                      :remove-provider (link "Remove Provider")
+//                      :subscriptions (link "Subscriptions")
+//                      :redhat-provider-repository-url-text "provider[repository_url]"
+//                      :choose-file "provider_contents"
+//                      :upload "upload_submit"
+//                      :enable-repositories-tab "//a[normalize-space(.)='Enable Repositories']"
+//                      :products-and-repositories "//nav[contains(@class,'subnav')]//a[contains(.,'Products')]"
+//                      
+//                      ;;add product
+//                      :add-product (button-div "Add Product")
+//                      :create-product "//input[@value='Create']"
+//                      :product-name-text "//*[@name='product[name]']"
+//                      :product-description-text "//*[@name='product[description]']"
+//                      :remove-product (link "Remove Product")
+//                      ;;add repo
+//                      :add-repository "//ul[//div[starts-with(@id,'edit_product') and normalize-space(.)='$1']]//div[starts-with(@id,'add_repository')]"
+//                      :repo-name-text "repo[name]"
+//                      :repo-url-text "repo[feed]"
+//                      :save-repository "//input[@value='Create']"
+//                      :remove-repository (link "Remove Repository")
+//      
+//                      ;;redhat page
+//                      :subscriptions-items "//table[@id='redhatSubscriptionTable']/tbody/tr"
+//                      })
+//      
+//      (def promotions {:products-category (promotion-content-category "products")
+//                       :expand-path "path-collapsed"
+//                       :errata-category (promotion-content-category "errata")
+//                       :packages-category (promotion-content-category "packages")
+//                       :kickstart-trees-category (promotion-content-category "kickstart trees")
+//                       :templates-category (promotion-content-category "templates")
+//                       :promotion-eligible-home "//div[@id='content_tree']//span[contains(@class,'home_img_inactive')]"
+//      
+//                       :review-for-promotion "review_changeset"
+//                       :promote-to-next-environment "//div[@id='promote_changeset' and not(contains(@class,'disabled'))]"
+//                       :promotion-empty-list "//div[@id='left_accordion']//ul[contains(.,'available for promotion')]"
+//                       :new-promotion-changeset "//a[contains(.,'New Promotion Changeset')]"
+//                       :changeset-name-text (textbox "name")
+//                       :save-changeset "save_changeset_button"
+//                       :changeset-content "//div[contains(@class,'slider_two') and contains(@class,'has_content')]"})
+//      
+//      (def users {:roles-subsubtab "//div[@class='panel-content']//a[.='Roles']"
+//                  :environments-subsubtab "//div[@class='panel-content']//a[.='Environments']"
+//                  :user-default-org-select "org_id[org_id]"
+//                  :save-user-environment "update_user"
+//                  :new-user "//a[@id='new']"
+//                  :new-user-username-text "username_field"
+//                  :new-user-password-text "password_field"
+//                  :new-user-confirm-text "confirm_field"
+//                  :new-user-default-org "org_id[org_id]"
+//                  :new-user-email "email_field"
+//                  :save-user "save_user"
+//                  :remove-user (link "Remove User")
+//                  :enable-inline-help-checkbox "user[helptips_enabled]"
+//                  :clear-disabled-helptips "clear_helptips"
+//                  :change-password-text "password_field"
+//                  :confirm-password-text "confirm_field"
+//                  :user-email-text "user[email]"
+//                  :save-roles "save_roles"
+//                  :add-all (link "Add all")
+//                  :password-conflict "//div[@id='password_conflict' and string-length(.)>0]"})
+//      
+//      (def sync-plans {:new-sync-plan "new"
+//                       :sync-plan-name-text "sync_plan[name]"
+//                       :sync-plan-description-text "sync_plan[description]"
+//                       :sync-plan-interval-select "sync_plan[interval]"
+//                       :sync-plan-date-text "sync_plan[plan_date]"
+//                       :sync-plan-time-text "sync_plan[plan_time]"
+//                       :save-sync-plan "plan_save"})
+//      
+//      (def systems {:system-name-text-edit "system[name]"
+//                    :system-description-text-edit "system[description]"
+//                    :system-location-text-edit "system[location]"
+//                    ;;subscriptions pane
+//                    :subscribe "commit"
+//      
+//                    ;;Activationkeys subtab
+//                    :new-activation-key "new"
+//                    :activation-key-name-text "activation_key[name]"
+//                    :activation-key-description-text "activation_key[description]"
+//                    :activation-key-template-select "activation_key[system_template_id]"
+//                    :save-activation-key "save_key"
+//                    :remove-activation-key (link "Remove Activation Key")
+//                    :subscriptions-right-nav "//div[contains(@class, 'panel-content')]//a[.='Subscriptions']"})
+//      
+//      (def roles {:new-role "//a[@id='new']"
+//                  :new-role-name-text "role[name]"
+//                  :new-role-description-text "role[description]"
+//                  :save-role "role_save"
+//                  :save-user-edit "save_password"
+//                  :role-users "role_users"
+//                  :role-permissions "role_permissions"
+//                  :next "next_button"
+//                  :permission-resource-type-select "permission[resource_type_attributes[name]]"
+//                  :permission-verb-select "permission[verb_values][]"
+//                  :permission-tag-select "tags"
+//                  :permission-name-text "permission[name]"
+//                  :permission-description-text "permission[description]"
+//                  :save-permission "save_permission_button"
+//                  :remove-role "remove_role"
+//                  :add-permission "add_permission"})
+//      
+//      (def sync-schedules {:apply-sync-schedule "apply_button"})
+//      
+//      (def templates {:new-template "new"
+//                      :template-name-text "system_template[name]"
+//                      :template-description-text "system_template[description]"
+//                      :save-new-template "template_save" ;;when creating
+//                      :template-eligible-package-groups (template-eligible-category "Package Groups")
+//                      :template-eligible-packages (template-eligible-category "Packages")
+//                      :template-eligible-repositories (template-eligible-category "Repositories")
+//                      :template-package-groups (slide-link "Package Groups")
+//                      :template-eligible-home "//div[@id='content_tree']//span[contains(@class,'home_img_inactive')]"
+//                      :save-template "save_template"}) ;;when editing
+//      
+//      ;;merge all the preceeding maps together, plus a few more items.
+//      (def ^{:doc "All the selenium locators for the Katello UI. Maps a
+//        keyword to the selenium locator. You can pass the keyword to
+//        selenium just the same as you would the locator string. See also
+//        SeleniumLocatable protocol."}
+//        uimap
+//        (merge all-tabs common organizations environments roles users systems sync-plans
+//               sync-schedules promotions providers templates
+//               { ;; login page
+//                :username-text (textbox "username")
+//                :password-text (textbox "password")
+//                :log-in "//input[@value='Log In']"
+//      
+//                    
+//                ;;tabs with special chars in name
+//                :sub-organizations (tab "Sub-Organizations")
+//                         
+//      
+//                ;;Sync Management subtab
+//                :synchronize-now "sync_button"}))
+//      
+//      ;;Tells the clojure selenium client where to look up keywords to get
+//      ;;real selenium locators (in uimap in this namespace).
+//      (extend-protocol SeleniumLocatable
+//        clojure.lang.Keyword
+//        (sel-locator [k] (uimap k))
+//        String
+//        (sel-locator [x] x))
+//      
+//      (defn promotion-env-breadcrumb
+//        "Locates a link in the environment breadcrumb UI widget. If there
+//        are multiple environment paths, and you wish to select Library,
+//        'next' is required."
+//        [name & [next]]
+//        (let [prefix "//a[normalize-space(.)='%1$s' and contains(@class, 'path_link')]"]
+//          (Element. (format
+//                     (str prefix (if next "/../../..//a[normalize-space(.)='%1$s']" ""))
+//                     name next))))
+//      
+//      (defn inactive-edit-field
+//        "Takes a locator for an active in-place edit field, returns the
+//        inactive version"
+//        [loc]
+//        (format "//div[@name='%1s']" (sel-locator loc)))
+//      
+//      (defn left-pane-item
+//        "Returns a selenium locator for an item in a left
+//         pane list (by the name of the item)"
+//        [name]
+//        (Element. (LocatorTemplate. "Left pane item"
+//                                    "//div[@id='list']//div[starts-with(normalize-space(.),'$1')]")
+//                  (into-array [(let [l (.length name)]
+//                                 (if (> l 32)
+//                                   (.substring name 0 32) ;workaround for bz 737678
+//                                   name))])))
+//      
+//      
+//      ;;nav tricks
+//      (defn select-environment-widget [env-name & [{:keys [next-env-name]}]]
+//        (do (when (browser isElementPresent :expand-path)
+//              (browser click :expand-path))
+//            (browser click (promotion-env-breadcrumb env-name next-env-name))))
+//      
+//      (defn search [search-term]
+//        (fill-form {:search-bar search-term}
+//                   :search-submit (constantly nil)))
+//      
+//      (defn choose-left-pane
+//        "Selects an item in the left pane. If the item is not found, a
+//         search is performed and the select is attempted again. Takes an
+//         optional post-fn to perform afterwards."
+//        [item & [post-fn]]
+//        (try (browser click item)
+//             (catch SeleniumException se
+//               (do (search (-> item .getArguments first))
+//                   (browser click item)))
+//             (finally ((or post-fn no-wait)))))
+//      
+//      (defn toggler
+//        "Returns a function that returns a locator for the given on/off text
+//         and locator strategy. Used for clicking things like +Add/Remove for
+//         items in changesets or permission lists."
+//        [[on-text off-text]
+//         loc-strategy]
+//        (fn [associated-text on?]
+//          (loc-strategy (if on? on-text off-text) associated-text)))
+//      
+//      (def add-remove ["+ Add" "Remove"])
+//      
+//      (def user-role-toggler (toggler add-remove role-action))
+//      (def template-toggler (toggler add-remove template-action))
+//      
+//      
+//      (defn toggle "Toggles the item from on to off or vice versa."
+//        [a-toggler associated-text on?]
+//        (browser click (a-toggler associated-text on?)))
+//      
+//      ;;
+//      ;;Navigation tree - shows all the navigation paths through the ui.
+//      ;;this data is used by the katello.tasks/navigate function to get to
+//      ;;the given page.
+//      (def
+//        ^{:doc "The navigation layout of the UI. Each item in the tree is
+//        a new page or tab, that you can drill down into from its parent
+//        item. Each item contains a keyword to refer to the location in the
+//        UI, a list of any arguments needed to navigate there (for example,
+//        to navigate to a provider details page, you need the name of the
+//        provider). Finally some code to navigate to the location from its
+//        parent location. See also katello.tasks/navigate."}
+//        page-tree
+//        (page-zip (nav-tree
+//          [:top-level [] (if (or (not (browser isElementPresent :log-out))
+//                                 (browser isElementPresent :confirmation-dialog))
+//                           (browser open (@config :server-url)))
+//           [:content-management-tab [] (browser mouseOver :content-management)
+//            [:content-providers-tab [] (browser mouseOver :content-providers)
+//             [:custom-content-providers-tab [] (browser clickAndWait :custom-content-providers)
+//              [:new-provider-page [] (browser click :new-provider)]
+//              [:named-provider-page [provider-name] (choose-left-pane (left-pane-item provider-name))
+//               [:provider-products-repos-page [] (->browser (click :products-and-repositories)
+//                                                            (sleep 2000))
+//                [:named-product-page [product-name] (browser click (editable product-name))]
+//                [:named-repo-page [product-name repo-name] (browser click (editable repo-name))]]
+//               [:provider-details-page [] (browser click :details)]
+//               [:provider-subscriptions-page [] (browser click :subscriptions)]]]
+//             [:redhat-provider-tab [] (browser clickAndWait :red-hat-content-provider)]]
+//            [:sync-management-page [] (browser mouseOver :sync-management)
+//             [:sync-status-page [] (browser clickAndWait :sync-status)]
+//             [:sync-plans-page [] (browser clickAndWait :sync-plans)
+//              [:named-sync-plan-page [sync-plan-name]
+//               (choose-left-pane (left-pane-item sync-plan-name))]
+//              [:new-sync-plan-page [] (browser click :new-sync-plan)]]
+//             [:sync-schedule-page [] (browser clickAndWait :sync-schedule)]]
+//            [:promotions-page [] (browser clickAndWait :promotions)
+//             [:named-environment-promotions-page [env-name next-env-name]
+//              (select-environment-widget env-name {:next-env-name next-env-name
+//                                                   :wait-fn load-wait})
+//              [:named-changeset-promotions-page [changeset-name]
+//               (browser click (changeset changeset-name))]]]
+//            [:system-templates-page [] (browser clickAndWait :system-templates)
+//             [:named-system-template-page [template-name] (browser click (slide-link template-name))]
+//             [:new-system-template-page [] (browser click :new-template)]]]
+//           [:systems-tab [] (browser mouseOver :systems)
+//            [:systems-all-page [] (browser clickAndWait :all)
+//             [:systems-by-environment-page [] (browser clickAndWait :by-environments)
+//              [:named-systems-page [system-name] (choose-left-pane
+//                                                  (left-pane-item system-name))
+//               [:system-subscriptions-page [] (browser click :subscriptions-right-nav)]]]]
+//            [:activation-keys-page [] (browser clickAndWait :activation-keys)
+//             [:named-activation-key-page [activation-key-name]
+//              (choose-left-pane (left-pane-item activation-key-name))]
+//             [:new-activation-key-page [] (browser click :new-activation-key)]]
+//            [:systems-environment-page [env-name]
+//             (do (browser clickAndWait :by-environments)
+//                 (select-environment-widget env-name))
+//             [:named-system-environment-page [system-name]
+//              (choose-left-pane (left-pane-item system-name))]]]
+//           [:organizations-tab [] (browser clickAndWait :organizations)
+//            [:new-organization-page [] (browser click :new-organization)]
+//            [:named-organization-page [org-name] (choose-left-pane (left-pane-item org-name))
+//             [:new-environment-page [] (browser click :new-environment)]
+//             [:named-environment-page [env-name] (browser click (environment-link env-name))]]]
+//           [:administration-tab [] (browser mouseOver :administration)
+//            [:users-tab [] (browser clickAndWait :users)
+//             [:named-user-page [username] (choose-left-pane (user username))
+//              [:user-environments-page [] (browser click :environments-subsubtab)]
+//              [:user-roles-permissions-page [] (browser click :roles-subsubtab)]]]
+//            [:roles-tab [] (browser clickAndWait :roles)
+//             [:named-role-page [role-name] (choose-left-pane (left-pane-item role-name))
+//              [:named-role-users-page [] (browser click :role-users)]
+//              [:named-role-permissions-page [] (browser click :role-permissions)]]]]])))
+//      
+//      (def tab-list '(:redhat-provider-tab
+//                      :roles-tab :users-tab
+//                      :systems-all-page
+//                      :activation-keys-page
+//                      :systems-by-environment-page))
     //GENERIC
     public Element checkboxGeneric = new Element(type,"checkbox");
     
@@ -214,14 +739,6 @@ public class UIElements extends UILocatorStrategies{
 	public LocatorStrategy providerAccountNameLink = new LocatorTemplate("providerAccountNameLink", '''//a[normalize-space(.)='$1']''');
 	
 	
-	//NAVIGATION
-	public TabElement administration = new TabElement(notSelectedNavLink, selectedNavLink,"Administration");
-	public TabElement resourceManagent = new TabElement(notSelectedNavLink, selectedNavLink,"Resource Management");
-	public TabElement imageFactory = new TabElement(notSelectedNavLink, selectedNavLink,"Image Factory");
-	public TabElement providerAccounts = new TabElement(notSelectedNavLink, selectedNavLink,"Provider Account");
-	public TabElement roles = new TabElement(notSelectedNavLink, selectedNavLink,"Roles");
-	public TabElement hwProfiles = new TabElement(notSelectedNavLink, selectedNavLink,"Hardware Profiles");
-	public TabElement imageImports = new TabElement(notSelectedNavLink, selectedNavLink,"Image Imports");
 	public Element resourceManagement = new Element(link,"Resource Management");
 	public Element genericProAcctCheckbox = new Element(name, "accounts_selected[]");
 	public Element selectAll = new Element(link, "All");

@@ -9,8 +9,6 @@ import com.redhat.qe.auto.instantiate.VersionedInstantiator
 import com.redhat.qe.auto.selenium.ExtendedSelenium
 import com.redhat.qe.auto.tcms.TCMSTestNGListener
 import com.redhat.qe.auto.testng.TestScript
-import com.redhat.qe.se.tasks.AssortedTasks
-import com.redhat.qe.se.tasks.NavigationTasks
 import com.thoughtworks.selenium.SeleniumException
 
 
@@ -44,8 +42,8 @@ public class SeleniumTestScript extends TestScript{
 	public static Boolean testUpstream;
 	
 	//Cloud Engine
-	protected static AssortedTasks tasks		= null;
-	protected static NavigationTasks nav		= null;
+	protected static def tasks		= null;
+	protected static def nav		= null;
 //	protected static UIElements UI			= null;
 	
 	public static VersionedInstantiator instantiator;
@@ -119,13 +117,13 @@ public class SeleniumTestScript extends TestScript{
 		
 		//Cloud Engine Version Instantiator
 		instantiator = new VersionedInstantiator(versions, 3, ceVersion);
-		tasks = (AssortedTasks)instantiator.getVersionedInstance(AssortedTasks.class);
+//		tasks = (AssortedTasks)instantiator.getVersionedInstance(AssortedTasks.class);
 //		UI = (UIElements)instantiator.getVersionedInstance(UIElements.class);
-		nav = (NavigationTasks)instantiator.getVersionedInstance(NavigationTasks.class);
+//		nav = (NavigationTasks)instantiator.getVersionedInstance(NavigationTasks.class);
 		
 		try {
 //			UI = (UIElements)UI;
-			tasks = (AssortedTasks)tasks;
+//			tasks = (AssortedTasks)tasks;
 			
 		}catch (ClassCastException cce){
 			log.log(Level.FINEST, "Couldn't initialize ce10 objects, probably because we're running against an older version.", cce);

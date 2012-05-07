@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="MyDevTestSuite">
+<suite name="KatelloRolesTestSuite">
 <!-- This suite file isn't used at all by the Hudson automation.  It was created
 to use during development, to test the automation without affecting the 
 configuration that's used by Hudson.
@@ -11,38 +11,23 @@ choose "Suite" and point to this file.  Also add the program argument
 that will turn on all the detailed logging. Finally change myDevGroup below
 to the testng group name you are using to categorize your @Test -->
 
-	<test name="ConfigServer">
+	
+	<test name="api-test">
 		<packages>
-			<package name="com.redhat.qe.ce10.tests" />
-			<package name="com.redhat.qe.ce10.base" />
+			<package name="com.redhat.qe.se.tests" />
 		</packages> 
-		<groups>
+		
+		  <groups>
 			<run>
-				<include name="setup" />
-				<include name="testplan-CloudEngine:ConductorConfigServer" />
-				<exclude name="knownBug"/>
-				<exclude name="dcsetup"/>
+				<include name="katello.roles" />
 			</run>
 		</groups>
+		
 	</test>
-
 	<listeners>
         
   		<listener class-name="com.redhat.qe.auto.testng.TestNGListener" />
-  		
+  		<listener class-name="com.redhat.qe.auto.testng.GroovyTestNGFixupListener" />
   		
 	</listeners>
 </suite>
-
-<!--
-<listener class-name="com.redhat.qe.auto.tcms.TCMSTestNGListener" />
-
-  
-		
-		<classes>
-			<class name="com.redhat.qe.jon22.tests.StartPageTests" />
-			<class name="com.redhat.qe.jon.base.TestScript" />
-		</classes>
-		-->
-		
-	
