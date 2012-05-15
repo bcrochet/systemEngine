@@ -1,11 +1,16 @@
 package com.redhat.qe.se.tasks
 
+import java.util.concurrent.TimeUnit
+
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.support.PageFactory
 
 import com.redhat.qe.se.pages.LoginPage
+import com.redhat.qe.se.pages.RolesPage
+import com.redhat.qe.se.pages.RolesPermissionsPage
+import com.redhat.qe.se.pages.UsersPage
 
 class KatelloTasks {
 	static private WebDriver driver = new FirefoxDriver()
@@ -17,6 +22,7 @@ class KatelloTasks {
 	}
     
     static def startSession() {
+        driver.manage().timeouts().implicitlyWait( 10000, TimeUnit.MILLISECONDS )
         driver.get("https://bcrochet-katello.usersys.redhat.com/katello")
     }
     
@@ -26,17 +32,9 @@ class KatelloTasks {
 	}
 	
 	static def createRole(def role) {
-		//WebElement rolesTab = driver.findElement(By.xpath("//a[@href='/katello/roles']"))
-		//rolesTab.click()
-		driver.get("https://bcrochet-katello.usersys.redhat.com/katello/roles")
-		WebElement newRoleLink = driver.findElementByCssSelector("a#new.block.fr")
-		newRoleLink.click()
-        System.sleep( 3000 )
-		WebElement newRoleName = driver.findElementById("role_name")
-		newRoleName.sendKeys(role.name)
-		WebElement newRoleSave = driver.findElementById("role_save")
-        newRoleSave.click()
-        System.sleep( 3000 )
+        def rolesPage = PageFactory.initElements(driver, RolesPage.class)
+        rolesPage.navigate()
+        rolesPage.createNewRole(role.name, role.description) 
 	}
     
     static def destroyRole(def role) {
@@ -50,8 +48,46 @@ class KatelloTasks {
         yesButton.click()
     }
     
+    static def selectRole(def role) {
+        def rolesPage = PageFactory.initElements( driver, RolesPage.class )
+        rolesPage.selectRole(role.name)
+    }
+    
+    static def addPermission(def permission) {
+        def rolesPermissionsPage = PageFactory.initElements( driver, RolesPermissionsPage.class )
+        rolesPermissionsPage.addPermission(permission)
+    }
+    
+    static def createUser(def user) {
+        def usersPage = PageFactory.initElements( driver, UsersPage.class )
+        usersPage.navigate()
+        usersPage.createNewUser(user.name, user.password, user.email, user.org)
+    }
+    
+    static def assignRole(def user, def role) {
+        def usersPage = PageFactory.initElements( driver, UsersPage.class )
+        usersPage.navigate()
+        usersPage.assignUserToRole(user.name, role.name)
+    }
+    
     static def endSession() {
         driver.close()
+    }
+    
+    static def selectOrg = { org ->
+        // Select the org
+    }
+    
+    static def selectOrgSwitcher = { org ->
+        // Select the org from the switcher
+    }
+    
+    static def navigateToAdministrationTab = { ->
+        // Navigate to Administration tab
+    }
+    
+    static def navigateToSystemsTab = { ->
+        // Navigate to Systems tab
     }
 }
 
